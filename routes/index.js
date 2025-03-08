@@ -16,4 +16,32 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// Route to list all movies
+router.get('/movies', (req, res, next) => {
+  Movie.find()
+    .then(movies => {
+      res.render('movies', { movies }); 
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+// Route to show individual movie details
+router.get("/movies/:id", (req, res, next) => {
+  const { id } = req.params;
+
+  Movie.findById(id)
+    .then((movie) => {
+      if (!movie) {
+        return res.status(404).render("not-found"); 
+      }
+      res.render("movieDetails", { movie }); 
+    })
+    .catch((error) => {
+      console.error("Error retrieving movie details:", error);
+      next(error);
+    });
+});
+
 module.exports = router;
